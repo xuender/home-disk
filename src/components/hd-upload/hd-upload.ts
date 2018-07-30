@@ -8,12 +8,6 @@ const URL = '/up'
 })
 export class HdUploadComponent {
   public uploader: FileUploader = new FileUploader({ url: URL });
-
-  text: string;
-
   constructor() {
-    console.log('Hello HdUploadComponent Component');
-    this.text = 'Hello World';
   }
-
 }

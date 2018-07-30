@@ -9,14 +9,14 @@
   <ion-item-sliding *ngFor="let item of uploader.queue">
     <ion-item>
       {{ item?.file?.name }}
-      <ion-badge *ngIf="item.isSuccess" item-end>
-        <ion-icon name="heart"></ion-icon>
+      <ion-badge color="secondary" *ngIf="item.isSuccess" item-end>
+        <ion-icon name="checkmark-circle"></ion-icon>
       </ion-badge>
-      <ion-badge *ngIf="item.isCancel" item-end>
-        <ion-icon name="heart"></ion-icon>
+      <ion-badge color="dark" *ngIf="item.isCancel" item-end>
+        <ion-icon name="close-circle"></ion-icon>
       </ion-badge>
-      <ion-badge *ngIf="item.isError" item-end>
-        <ion-icon name="heart"></ion-icon>
+      <ion-badge color="danger" *ngIf="item.isError" item-end>
+        <ion-icon name="help-circle"></ion-icon>
       </ion-badge>
     </ion-item>
     <ion-item-options side="right">
