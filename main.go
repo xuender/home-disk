@@ -7,6 +7,8 @@ import (
 	"errors"
 	"rsc.io/qr"
 	"fmt"
+	"os"
+	"io"
 
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
@@ -20,20 +22,52 @@ func main() {
 	// Middleware
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
+	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+		AllowOrigins: []string{"*"},
+		AllowMethods: []string{echo.POST},
+		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept},
+		AllowCredentials: true,
+	}))
 
 	e.Static("/", "www")
 	// Routes
 	e.GET("/qr", qrcode)
 	e.GET("/home", hello)
 	e.GET("/info", ip)
-	e.POST("/upload", upload)
+	e.POST("/up", upload)
 
 	// Start server
 	e.Logger.Fatal(e.Start(PORT))
 }
 
 func upload(c echo.Context) error {
-	return c.String(http.StatusOK, "OK")
+	c.Logger().Warn("文件上传")
+	file, err := c.FormFile("file")
+	if err != nil {
+		return err
+	}
+	src, err := file.Open()
+	if err != nil {
+		return err
+	}
+	defer src.Close()
+
+	_, err = os.Stat("data")
+	if os.IsNotExist(err){
+		os.Mkdir("data", 0777)
+	}
+	// 目的
+	dst, err := os.Create("data"+string(os.PathSeparator)+file.Filename)
+	if err != nil {
+		return err
+	}
+	defer dst.Close()
+
+	// 复制
+	if _, err = io.Copy(dst, src); err != nil {
+		return err
+	}
+	return c.String(http.StatusOK, "File is uploaded")
 }
 
 // 测试

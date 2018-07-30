@@ -1,16 +1,13 @@
-import { Component } from '@angular/core';
+import { Component } from '@angular/core'
+import { FileUploader } from 'ng2-file-upload'
 
-/**
- * Generated class for the HdUploadComponent component.
- *
- * See https://angular.io/api/core/Component for more info on Angular
- * Components.
- */
+const URL = '/up'
 @Component({
   selector: 'hd-upload',
   templateUrl: 'hd-upload.html'
 })
 export class HdUploadComponent {
+  public uploader: FileUploader = new FileUploader({ url: URL });
 
   text: string;
 
