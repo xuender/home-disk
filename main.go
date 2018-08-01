@@ -39,8 +39,8 @@ func main() {
 	e.POST("/up", upload)
 
 	// 打开浏览器
-	url, err:=getUrl()
-	if err==nil {
+	url, err := getUrl()
+	if err == nil {
 		goutils.Open(url)
 	}
 
@@ -110,8 +110,8 @@ func getIp() (string, error) {
 
 // QR码
 func qrcode(c echo.Context) error {
-	url, err:=getUrl()
-	if err!=nil {
+	url, err := getUrl()
+	if err != nil {
 		return c.String(http.StatusInternalServerError, err.Error())
 	}
 	code, err := qr.Encode(url, qr.Q)
@@ -121,7 +121,7 @@ func qrcode(c echo.Context) error {
 	return c.Blob(http.StatusOK, "image/png", code.PNG())
 }
 
-func getUrl() (string, error){
+func getUrl() (string, error) {
 	ip, err := getIp()
 	if err != nil {
 		return "", err
