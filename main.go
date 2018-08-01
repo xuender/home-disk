@@ -1,21 +1,21 @@
 package main
 
 import (
-	"os"
 	"log"
+	"os"
 
-	"github.com/xuender/goutils"
-	"github.com/urfave/cli"
 	"./hd"
+	"github.com/urfave/cli"
+	"github.com/xuender/goutils"
 )
 
 func main() {
 	app := cli.NewApp()
 	app.Name = "home-disk"
 	app.Usage = "家庭数据盘"
-	app.Flags = []cli.Flag {
+	app.Flags = []cli.Flag{
 		cli.BoolFlag{
-			Name: "browser,b",
+			Name:  "browser,b",
 			Usage: "启动禁止打开浏览器",
 		},
 	}
@@ -28,7 +28,7 @@ func main() {
 				goutils.Open(url)
 			}
 		}
-		web:=hd.Web{Port:port, Temp:"tmp", Data:"data"}
+		web := hd.Web{Port: port, Temp: "tmp", Data: "data"}
 		web.Run()
 		return nil
 	}
@@ -37,4 +37,3 @@ func main() {
 		log.Fatal(err)
 	}
 }
-

@@ -1,21 +1,23 @@
 package hd
+
 import (
-	"os"
-	"io"
-	"rsc.io/qr"
-	"net/http"
-	"log"
 	"github.com/labstack/echo"
-	"github.com/xuender/goutils"
 	"github.com/labstack/echo/middleware"
+	"github.com/xuender/goutils"
+	"io"
+	"log"
+	"net/http"
+	"os"
+	"rsc.io/qr"
 )
+
 type Web struct {
-	Port string    // 端口号
+	Port string // 端口号
 	Temp string // 临时文件目录
 	Data string // 保存数据目录
 }
 
-func (w *Web) Run(){
+func (w *Web) Run() {
 	// Echo instance
 	e := echo.New()
 
@@ -37,7 +39,7 @@ func (w *Web) Run(){
 	// Start server
 	e.Logger.Fatal(e.Start(w.Port))
 }
-func (w *Web)upload(c echo.Context) error {
+func (w *Web) upload(c echo.Context) error {
 	c.Logger().Warn("文件上传")
 	file, err := c.FormFile("file")
 	if err != nil {
@@ -52,7 +54,7 @@ func (w *Web)upload(c echo.Context) error {
 	mkdir(w.Data)
 	mkdir(w.Temp)
 	// 目的
-	f:=w.Temp + string(os.PathSeparator) + file.Filename
+	f := w.Temp + string(os.PathSeparator) + file.Filename
 	dst, err := os.Create(f)
 	if err != nil {
 		return err
@@ -64,13 +66,13 @@ func (w *Web)upload(c echo.Context) error {
 		return err
 	}
 	// TODO 保存FileId
-	fid, err:=goutils.NewFileId(f)
-	if err !=nil {
+	fid, err := goutils.NewFileId(f)
+	if err != nil {
 		return c.String(http.StatusInternalServerError, err.Error())
 	}
 	log.Println(fid)
-	r, err:=NewResource(f)
-	if err !=nil {
+	r, err := NewResource(f)
+	if err != nil {
 		return c.String(http.StatusInternalServerError, err.Error())
 	}
 	mkdir(r.Path(w.Data))
@@ -79,7 +81,7 @@ func (w *Web)upload(c echo.Context) error {
 }
 
 // QR码
-func (w *Web)qrcode(c echo.Context) error {
+func (w *Web) qrcode(c echo.Context) error {
 	url, err := GetUrl(w.Port)
 	if err != nil {
 		return c.String(http.StatusInternalServerError, err.Error())
@@ -90,4 +92,3 @@ func (w *Web)qrcode(c echo.Context) error {
 	}
 	return c.Blob(http.StatusOK, "image/png", code.PNG())
 }
-

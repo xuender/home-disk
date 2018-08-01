@@ -1,11 +1,13 @@
 package hd
+
 import (
-	"fmt"
-	"strings"
-	"net"
 	"errors"
+	"fmt"
+	"net"
 	"os"
+	"strings"
 )
+
 // 获取网址
 func GetUrl(port string) (string, error) {
 	ip, err := GetIp()
@@ -31,7 +33,7 @@ func GetIp() (string, error) {
 	return "", errors.New("未找到IP")
 }
 
-func mkdir(path string){
+func mkdir(path string) {
 	_, err := os.Stat(path)
 	if os.IsNotExist(err) {
 		os.MkdirAll(path, 0777)
