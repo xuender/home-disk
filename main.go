@@ -1,20 +1,22 @@
 package main
 
 import (
+	"errors"
+	"fmt"
+	"io"
 	"net"
 	"net/http"
-	"strings"
-	"errors"
-	"rsc.io/qr"
-	"fmt"
 	"os"
-	"io"
+	"rsc.io/qr"
+	"strings"
 
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
+	"github.com/xuender/goutils"
 )
 
 const PORT = ":1323"
+
 func main() {
 	// Echo instance
 	e := echo.New()
@@ -23,9 +25,9 @@ func main() {
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
-		AllowOrigins: []string{"*"},
-		AllowMethods: []string{echo.POST},
-		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept},
+		AllowOrigins:     []string{"*"},
+		AllowMethods:     []string{echo.POST},
+		AllowHeaders:     []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept},
 		AllowCredentials: true,
 	}))
 
@@ -35,6 +37,12 @@ func main() {
 	e.GET("/home", hello)
 	e.GET("/info", ip)
 	e.POST("/up", upload)
+
+	// 打开浏览器
+	url, err:=getUrl()
+	if err==nil {
+		goutils.Open(url)
+	}
 
 	// Start server
 	e.Logger.Fatal(e.Start(PORT))
@@ -53,11 +61,11 @@ func upload(c echo.Context) error {
 	defer src.Close()
 
 	_, err = os.Stat("data")
-	if os.IsNotExist(err){
+	if os.IsNotExist(err) {
 		os.Mkdir("data", 0777)
 	}
 	// 目的
-	dst, err := os.Create("data"+string(os.PathSeparator)+file.Filename)
+	dst, err := os.Create("data" + string(os.PathSeparator) + file.Filename)
 	if err != nil {
 		return err
 	}
@@ -74,17 +82,18 @@ func upload(c echo.Context) error {
 func hello(c echo.Context) error {
 	return c.String(http.StatusOK, "Hello, World!")
 }
+
 // IP
 func ip(c echo.Context) error {
-	ip, err:=getIp()
-	if err!=nil {
+	ip, err := getIp()
+	if err != nil {
 		c.String(http.StatusInternalServerError, err.Error())
 	}
 	return c.String(http.StatusOK, ip)
 }
 
 // 获取IP地址
-func getIp() (string, error){
+func getIp() (string, error) {
 	addrs, err := net.InterfaceAddrs()
 	if err != nil {
 		return "", err
@@ -101,13 +110,21 @@ func getIp() (string, error){
 
 // QR码
 func qrcode(c echo.Context) error {
-	ip, err:=getIp()
+	url, err:=getUrl()
 	if err!=nil {
-		return c.String(http.StatusInternalServerError, "IP获取错误")
+		return c.String(http.StatusInternalServerError, err.Error())
 	}
-	code, err := qr.Encode(fmt.Sprintf("http://%s%s",ip, PORT),qr.Q)
-	if err!=nil {
+	code, err := qr.Encode(url, qr.Q)
+	if err != nil {
 		return c.String(http.StatusInternalServerError, "QR码生成错误")
 	}
 	return c.Blob(http.StatusOK, "image/png", code.PNG())
+}
+
+func getUrl() (string, error){
+	ip, err := getIp()
+	if err != nil {
+		return "", err
+	}
+	return fmt.Sprintf("http://%s%s", ip, PORT), nil
 }
