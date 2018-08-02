@@ -47,3 +47,5 @@ Thumbs.db
 UserInterfaceState.xcuserstate
 package-lock.json
 data/
+temp/
+storage/

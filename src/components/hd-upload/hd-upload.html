@@ -1,10 +1,29 @@
 <ion-list>
   <ion-list-header>
-    <input ion-input type="file" ng2FileSelect [uploader]="uploader" multiple/>
+    文件上传
   </ion-list-header>
   <ion-item>
-    上传队列
+    <input ion-input type="file" ng2FileSelect [uploader]="uploader" multiple/>
+  </ion-item>
+  <ion-item>
+    上传文件数量
     <ion-badge item-end>{{ uploader?.queue?.length }}</ion-badge>
+  </ion-item>
+  <ion-item>
+    <ion-buttons start>
+      <button color="secondary" large ion-button (click)="uploader.uploadAll()" [disabled]="!uploader.getNotUploadedItems().length">
+        上传
+      </button>
+      <button color="dark" large ion-button (click)="uploader.cancelAll()" [disabled]="!uploader.isUploading">
+        取消
+      </button>
+      <button color="danger" large ion-button (click)="uploader.clearQueue()" [disabled]="!uploader.queue.length">
+        删除
+      </button>
+    </ion-buttons>
+  </ion-item>
+  <ion-item>
+    <div ion-button full role="progressbar" [ngStyle]="{ 'width': uploader.progress + '%' }">{{ uploader.progress + '%' }}</div>
   </ion-item>
   <ion-item-sliding *ngFor="let item of uploader.queue">
     <ion-item>
@@ -31,20 +50,4 @@
       </button>
     </ion-item-options>
   </ion-item-sliding>
-  <ion-item>
-    <div ion-button full role="progressbar" [ngStyle]="{ 'width': uploader.progress + '%' }">{{ uploader.progress + '%' }}</div>
-  </ion-item>
-  <ion-item>
-    <ion-buttons start>
-      <button color="secondary" large ion-button (click)="uploader.uploadAll()" [disabled]="!uploader.getNotUploadedItems().length">
-        上传
-      </button>
-      <button color="dark" large ion-button (click)="uploader.cancelAll()" [disabled]="!uploader.isUploading">
-        取消
-      </button>
-      <button color="danger" large ion-button (click)="uploader.clearQueue()" [disabled]="!uploader.queue.length">
-        删除
-      </button>
-    </ion-buttons>
-  </ion-item>
   <ion-list>

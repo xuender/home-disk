@@ -26,13 +26,27 @@ func main() {
 			Value: "6181",
 			Usage: "访问端口",
 		},
+		cli.StringFlag{
+			Name:  "temp,t",
+			Value: "temp",
+			Usage: "临时文件目录",
+		},
+		cli.StringFlag{
+			Name:  "data,d",
+			Value: "data",
+			Usage: "文件存储目录",
+		},
+		cli.StringFlag{
+			Name:  "storage,s",
+			Value: "storage",
+			Usage: "数据库目录",
+		},
 	}
 	app.Action = func(c *cli.Context) error {
 		var port = c.String("port")
 		if !strings.HasPrefix(port, ":") {
 			port = ":" + port
 		}
-
 		// 打开浏览器
 		if !c.Bool("browser") {
 			url, err := hd.GetUrl(port)
@@ -40,7 +54,12 @@ func main() {
 				goutils.Open(url)
 			}
 		}
-		web := hd.Web{Port: port, Temp: "tmp", Data: "data"}
+		web := hd.Web{
+			Port: port,
+			Temp: c.String("temp"),
+			Data: c.String("data"),
+			Storage: c.String("storage"),
+		}
 		web.Run()
 		return nil
 	}

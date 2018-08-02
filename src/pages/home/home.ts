@@ -1,14 +1,16 @@
 import { Component } from '@angular/core';
-import { NavController } from 'ionic-angular';
+import { Platform, NavController } from 'ionic-angular';
 
 @Component({
   selector: 'page-home',
   templateUrl: 'home.html'
 })
 export class HomePage {
-
-  constructor(public navCtrl: NavController) {
-
+  public pc = true
+  constructor(
+    public navCtrl: NavController,
+    public plt: Platform
+  ) {
+    this.pc = !this.plt.is('mobile') && !this.plt.is('mobileweb')
   }
-
 }

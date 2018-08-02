@@ -15,6 +15,7 @@ type Web struct {
 	Port string // 端口号
 	Temp string // 临时文件目录
 	Data string // 保存数据目录
+  Storage string // 数据库目录
 }
 
 func (w *Web) Run() {
