@@ -48,4 +48,4 @@ UserInterfaceState.xcuserstate
 package-lock.json
 data/
 temp/
-storage/
+db/

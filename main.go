@@ -18,8 +18,8 @@ func main() {
 	app.Version = "0.0.1"
 	app.Flags = []cli.Flag{
 		cli.BoolFlag{
-			Name:  "browser,b",
-			Usage: "启动禁止打开浏览器",
+			Name:  "no-open,n",
+			Usage: "启动不打开浏览器",
 		},
 		cli.StringFlag{
 			Name:  "port,p",
@@ -37,18 +37,18 @@ func main() {
 			Usage: "文件存储目录",
 		},
 		cli.StringFlag{
-			Name:  "storage,s",
-			Value: "storage",
+			Name:  "db,b",
+			Value: "db",
 			Usage: "数据库目录",
 		},
 	}
 	app.Action = func(c *cli.Context) error {
-		var port = c.String("port")
+		var port = c.String("p")
 		if !strings.HasPrefix(port, ":") {
 			port = ":" + port
 		}
 		// 打开浏览器
-		if !c.Bool("browser") {
+		if !c.Bool("n") {
 			url, err := hd.GetUrl(port)
 			if err == nil {
 				goutils.Open(url)
@@ -56,9 +56,9 @@ func main() {
 		}
 		web := hd.Web{
 			Port: port,
-			Temp: c.String("temp"),
-			Data: c.String("data"),
-			Storage: c.String("storage"),
+			Temp: c.String("t"),
+			Data: c.String("d"),
+			Db:   c.String("b"),
 		}
 		web.Run()
 		return nil
