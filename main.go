@@ -17,9 +17,15 @@ func main() {
 	app.Usage = "家庭数据盘"
 	app.Version = "0.0.1"
 	app.Flags = []cli.Flag{
-		cli.BoolFlag{
-			Name:  "no-open,n",
-			Usage: "启动不打开浏览器",
+		cli.StringFlag{
+			Name:  "data,d",
+			Value: "data",
+			Usage: "文件存储目录",
+		},
+		cli.StringFlag{
+			Name:  "db,b",
+			Value: "db",
+			Usage: "数据库目录",
 		},
 		cli.StringFlag{
 			Name:  "port,p",
@@ -31,15 +37,13 @@ func main() {
 			Value: "temp",
 			Usage: "临时文件目录",
 		},
-		cli.StringFlag{
-			Name:  "data,d",
-			Value: "data",
-			Usage: "文件存储目录",
+		cli.BoolFlag{
+			Name:  "no-open,n",
+			Usage: "启动不打开浏览器",
 		},
-		cli.StringFlag{
-			Name:  "db,b",
-			Value: "db",
-			Usage: "数据库目录",
+		cli.BoolFlag{
+			Name:  "db-reset,r",
+			Usage: "数据库重置",
 		},
 	}
 	app.Action = func(c *cli.Context) error {
@@ -59,6 +63,10 @@ func main() {
 			Temp: c.String("t"),
 			Data: c.String("d"),
 			Db:   c.String("b"),
+		}
+		err := web.Init(c.Bool("r"))
+		if err != nil {
+			return err
 		}
 		web.Run()
 		return nil

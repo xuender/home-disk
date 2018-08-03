@@ -9,6 +9,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"path/filepath"
 	"rsc.io/qr"
 )
 
@@ -20,13 +21,37 @@ type Web struct {
 	db   *leveldb.DB // 数据库
 }
 
-func (w *Web) Run() {
+func (w *Web) Init(reset bool) error {
+	if reset {
+		// 删除数据库
+		log.Printf("删除数据库 %s\n", w.Db)
+		os.RemoveAll(w.Db)
+	}
 	db, err := leveldb.OpenFile(w.Db, nil)
 	w.db = db
 	if err != nil {
-		log.Fatal(err)
-		return
+		return err
 	}
+	if reset {
+		log.Println("数据库重置")
+		return filepath.Walk(w.Data, func(file string, f os.FileInfo, err error) error {
+			if f == nil {
+				return err
+			}
+			if f.IsDir() {
+				return nil
+			}
+			key, err := w.getKey(file)
+			if err != nil {
+				return err
+			}
+			return w.save(file, key)
+		})
+	}
+	return nil
+}
+
+func (w *Web) Run() {
 	e := echo.New()
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
@@ -73,7 +98,9 @@ func (w *Web) save(file string, key []byte) error {
 		return err
 	}
 	mkdir(r.Path(w.Data))
-	os.Rename(file, r.FullName(w.Data))
+	if file != r.FullName(w.Data) {
+		os.Rename(file, r.FullName(w.Data))
+	}
 	bs, _ := goutils.Encode(r)
 	w.db.Put(key, bs, nil)
 	return nil
