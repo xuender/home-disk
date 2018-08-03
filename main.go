@@ -37,6 +37,11 @@ func main() {
 			Value: "temp",
 			Usage: "临时文件目录",
 		},
+		cli.IntFlag{
+			Name:  "size,s",
+			Value: 200,
+			Usage: "缩略图尺寸",
+		},
 		cli.BoolFlag{
 			Name:  "no-open,n",
 			Usage: "启动不打开浏览器",
@@ -51,6 +56,18 @@ func main() {
 		if !strings.HasPrefix(port, ":") {
 			port = ":" + port
 		}
+		web := hd.Web{
+			Port: port,
+			Temp: c.String("t"),
+			Data: c.String("d"),
+			Db:   c.String("b"),
+			Size: c.Int("s"),
+		}
+		// 初始化
+		err := web.Init(c.Bool("r"))
+		if err != nil {
+			return err
+		}
 		// 打开浏览器
 		if !c.Bool("n") {
 			url, err := hd.GetUrl(port)
@@ -58,16 +75,7 @@ func main() {
 				goutils.Open(url)
 			}
 		}
-		web := hd.Web{
-			Port: port,
-			Temp: c.String("t"),
-			Data: c.String("d"),
-			Db:   c.String("b"),
-		}
-		err := web.Init(c.Bool("r"))
-		if err != nil {
-			return err
-		}
+		// 运行
 		web.Run()
 		return nil
 	}

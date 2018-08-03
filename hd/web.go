@@ -1,6 +1,7 @@
 package hd
 
 import (
+	"encoding/hex"
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
 	"github.com/syndtr/goleveldb/leveldb"
@@ -18,6 +19,7 @@ type Web struct {
 	Temp string      // 临时文件目录
 	Data string      // 保存数据目录
 	Db   string      // 数据库目录
+	Size int         // 缩略图尺寸
 	db   *leveldb.DB // 数据库
 }
 
@@ -63,7 +65,11 @@ func (w *Web) Run() {
 	}))
 	// 静态资源
 	e.Static("/", "www")
+	// 二维码
 	e.GET("/qr", w.qrcode)
+	// 缩略图
+	e.GET("/t/:id", w.thumbnail)
+	// 文件上传
 	e.POST("/up", w.upload)
 	// 启动服务
 	e.Logger.Fatal(e.Start(w.Port))
@@ -93,7 +99,8 @@ func (w *Web) upload(c echo.Context) error {
 }
 
 func (w *Web) save(file string, key []byte) error {
-	r, err := NewResource(file)
+	log.Println(hex.EncodeToString(key))
+	r, err := NewResource(file, w.Size)
 	if err != nil {
 		return err
 	}
@@ -164,4 +171,20 @@ func (w *Web) qrcode(c echo.Context) error {
 		return c.String(http.StatusInternalServerError, "QR码生成错误")
 	}
 	return c.Blob(http.StatusOK, "image/png", code.PNG())
+}
+
+// 缩略图
+func (w *Web) thumbnail(c echo.Context) error {
+	id := c.Param("id")
+	key, err := hex.DecodeString(id)
+	if err != nil {
+		return c.String(http.StatusInternalServerError, "缩略图ID错误: "+id)
+	}
+	data, err := w.db.Get(key, nil)
+	if err != nil {
+		return c.String(http.StatusInternalServerError, "缩略图数据错误: "+id)
+	}
+	r := Resource{}
+	goutils.Decode(data, &r)
+	return c.Blob(http.StatusOK, "image/jpeg", r.Thumbnail)
 }

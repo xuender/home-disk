@@ -9,15 +9,16 @@ import (
 )
 
 type Resource struct {
-	Name  string    // 文件名
-	Ct    time.Time // 创建时间
-	Mtype string    // 类型
-	Msub  string    // 子类型
+	Name      string    // 文件名
+	Ct        time.Time // 创建时间
+	Mtype     string    // 类型
+	Msub      string    // 子类型
+	Thumbnail []byte    // 缩略图
 }
 
 const time_format = "2006:01:02 15:04:05"
 
-func NewResource(file string) (*Resource, error) {
+func NewResource(file string, size int) (*Resource, error) {
 	fi, err := os.Stat(file)
 	if err != nil {
 		return nil, err
@@ -43,6 +44,8 @@ func NewResource(file string) (*Resource, error) {
 				}
 				// TODO 未来增加经纬度等
 			}
+			// 缩略图
+			r.Thumbnail, _ = thumbnail(file, size, size)
 		}
 	}
 	return r, nil
