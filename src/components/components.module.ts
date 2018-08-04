@@ -4,8 +4,12 @@ import { FileUploadModule } from 'ng2-file-upload'
 //import { NgxUploaderModule } from 'ngx-uploader'
 
 import { HdUploadComponent } from './hd-upload/hd-upload';
+import { HdFilesComponent } from './hd-files/hd-files';
 @NgModule({
-  declarations: [HdUploadComponent],
+  declarations: [
+    HdUploadComponent,
+    HdFilesComponent,
+  ],
   imports: [
     IonicModule,
     FileUploadModule,
@@ -13,6 +17,7 @@ import { HdUploadComponent } from './hd-upload/hd-upload';
   exports: [
     HdUploadComponent,
     FileUploadModule,
+    HdFilesComponent,
   ]
 })
 export class ComponentsModule { }
