@@ -5,11 +5,11 @@
 </ion-header>
 
 <ion-content>
-  <ion-list *ngFor="let d of items">
+  <ion-list *ngFor="let d of days">
     <ion-list-header>
       {{ d | day }}
     </ion-list-header>
-    <hd-files [day]="d"></hd-files>
+    <hd-files [files]="files.get(d)" (selectFile)="onSelectFile($event)"></hd-files>
   </ion-list>
   <ion-infinite-scroll (ionInfinite)="doInfinite($event)">
     <ion-infinite-scroll-content></ion-infinite-scroll-content>

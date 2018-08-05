@@ -1,7 +1,7 @@
 <ion-grid>
   <ion-row>
-    <ion-col *ngFor="let f of files" [ngSwitch]="f.type" col-4 col-sm-3 col-dm-3 col-lg-2>
-      <img *ngSwitchCase="'image'" src="/t/{{f.id}}" />
+    <ion-col *ngFor="let f of files" [ngSwitch]="f.type" (click)="onSelectFile(f)" col-4 col-sm-3 col-dm-3 col-lg-2>
+      <img *ngSwitchCase="'image'" src="/t/{{f.id}}"/>
       <img *ngSwitchCase="'audio'" src="assets/imgs/audio.png" />
       <img *ngSwitchCase="'video'" src="assets/imgs/video.png" />
       <img *ngSwitchCase="'archive'" src="assets/imgs/archive.png" />
