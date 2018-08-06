@@ -115,7 +115,7 @@ func (w *Web) upload(c echo.Context) error {
 	if err != nil {
 		return c.String(http.StatusInternalServerError, err.Error())
 	}
-	return c.String(http.StatusOK, f.Id)
+	return c.JSON(http.StatusOK, f)
 }
 
 func (w *Web) save(file string, key []byte) (*File, error) {
