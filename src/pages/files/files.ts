@@ -9,19 +9,15 @@ import { ImagePage } from '../image/image'
   templateUrl: 'files.html',
 })
 export class FilesPage {
-  days: File[]
-  files: Map<String, Array<File>>
   constructor(
     public navCtrl: NavController,
     public navParams: NavParams,
     public modalCtrl: ModalController,
-    private filesProvider: FilesProvider,
+    public files: FilesProvider,
   ) {
-    this.days = this.filesProvider.days
-    this.files = this.filesProvider.files
   }
   doInfinite(infiniteScroll) {
-    this.filesProvider.loadDay()
+    this.files.loadDay()
       .then(r => infiniteScroll.complete())
   }
   onSelectFile(file: File) {

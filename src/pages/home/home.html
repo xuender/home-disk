@@ -6,5 +6,5 @@
 
 <ion-content padding>
   <img src="/qr" *ngIf="pc">
-  <hd-upload></hd-upload>
+  <hd-upload (up)="onUpload($event)"></hd-upload>
 </ion-content>

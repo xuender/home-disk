@@ -2,30 +2,46 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { File } from '../../domain/file'
 import { Observable } from 'rxjs/Observable';
+import { concatAll } from 'rxjs/operators'
+import { of } from 'rxjs/observable/of'
 @Injectable()
 export class FilesProvider {
   private _days: string[] = []
-  files = new Map<string, Array<File>>()
+  filesMap = new Map<string, Array<File>>()
   days = []
   private run = true
   constructor(public http: HttpClient) {
+    this.reset();
+  }
+  reset() {
+    this.run = true
+    this.days = []
+    this.filesMap.clear()
+    this._days = []
     this.http.get('/days')
       .subscribe((days: string[]) => {
         this._days = days
         // 初始化 5 天
-        for (let i = 0; i < 5; i++) {
-          const d = this._days.shift()
-          if (d) {
-            console.log('d', d)
-            this.getFiles(d).subscribe(files => {
-              this.files.set(d, files)
-              this.days.push(d)
-            })
-          } else {
-            break
-          }
+        const td = this._days.splice(0, 5)
+        if (td.length == 0) {
+          this.run = false
+          return
         }
-        this.run = false
+        const s = [];
+        for (const d of td) {
+          s.push(this.getFiles(d))
+        }
+        const source = of(...s);
+        source.pipe(concatAll())
+          .subscribe(files => {
+            const d = td.shift()
+            console.log('reset d:', d)
+            this.filesMap.set(d, files)
+            this.days.push(d)
+            if (td.length == 0) {
+              this.run = false
+            }
+          })
       })
   }
   getFiles(day: string): Observable<Array<File>> {
@@ -38,9 +54,9 @@ export class FilesProvider {
         this.run = true
         const d = this._days.shift()
         if (d) {
-          console.log('dd', d)
+          console.log('load d:', d)
           this.getFiles(d).subscribe(files => {
-            this.files.set(d, files)
+            this.filesMap.set(d, files)
             this.days.push(d)
             this.run = false
             resolve(true)

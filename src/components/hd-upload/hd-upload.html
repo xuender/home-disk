@@ -11,7 +11,7 @@
   </ion-item>
   <ion-item>
     <ion-buttons start>
-      <button color="secondary" large ion-button (click)="uploader.uploadAll()" [disabled]="!uploader.getNotUploadedItems().length">
+      <button color="secondary" large ion-button (click)="uploadAll()" [disabled]="!uploader.getNotUploadedItems().length">
         上传
       </button>
       <button color="dark" large ion-button (click)="uploader.cancelAll()" [disabled]="!uploader.isUploading">
@@ -39,7 +39,7 @@
       </ion-badge>
     </ion-item>
     <ion-item-options side="right">
-      <button color="secondary" ion-button (click)="item.upload()" [disabled]="item.isReady || item.isUploading || item.isSuccess">
+      <button color="secondary" ion-button (click)="upload(item)" [disabled]="item.isReady || item.isUploading || item.isSuccess">
         上传
       </button>
       <button color="dark" ion-button (click)="item.cancel()" [disabled]="!item.isUploading">
