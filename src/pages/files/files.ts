@@ -25,7 +25,7 @@ export class FilesPage {
       .then(r => infiniteScroll.complete())
   }
   onSelectFile(file: File) {
-    this.modalCtrl.create(this.getPage(file.type), {file:file})
+    this.modalCtrl.create(this.getPage(file.type), { file: file })
       .present();
   }
   private getPage(type: string): any {

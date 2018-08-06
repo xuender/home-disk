@@ -8,29 +8,30 @@ import (
 	"time"
 )
 
-type Resource struct {
-	Name      string    // 文件名
-	Ct        time.Time // 创建时间
-	Mtype     string    // 类型
-	Msub      string    // 子类型
-	Thumbnail []byte    // 缩略图
+type File struct {
+	Id        string    `json:"id"`   // 主键
+	Name      string    `json:"name"` // 文件名
+	Ct        time.Time `json:"ct"`   // 创建时间
+	Type      string    `json:"type"` // 类型
+	Sub       string    `json:"sub"`  // 子类型
+	Thumbnail []byte    `json:"-"`    // 缩略图
 }
 
 const time_format = "2006:01:02 15:04:05"
 
-func NewResource(file string, size int) (*Resource, error) {
+func NewFile(file string, size int) (*File, error) {
 	fi, err := os.Stat(file)
 	if err != nil {
 		return nil, err
 	}
-	r := new(Resource)
+	r := new(File)
 	r.Name = fi.Name()
 	r.Ct = fi.ModTime()
 	t, err := filetype.MatchFile(file)
 	if err == nil {
-		r.Mtype = t.MIME.Type
-		r.Msub = t.MIME.Subtype
-		if r.Mtype == "image" {
+		r.Type = t.MIME.Type
+		r.Sub = t.MIME.Subtype
+		if r.Type == "image" {
 			// 读取exif
 			data, err := exif.Read(file)
 			if err == nil {
@@ -52,7 +53,7 @@ func NewResource(file string, size int) (*Resource, error) {
 }
 
 // 目录
-func (r *Resource) Path(path string) string {
+func (r *File) Path(path string) string {
 	return strings.Join([]string{
 		path,
 		r.Ct.Format("2006"),
@@ -62,7 +63,7 @@ func (r *Resource) Path(path string) string {
 }
 
 // 全称
-func (r *Resource) FullName(path string) string {
+func (r *File) FullName(path string) string {
 	return strings.Join([]string{
 		path,
 		r.Ct.Format("2006"),
@@ -70,4 +71,8 @@ func (r *Resource) FullName(path string) string {
 		r.Ct.Format("02"),
 		r.Name,
 	}, string(os.PathSeparator))
+}
+
+func (f *File) Day() string {
+	return f.Ct.Format("2006-01-02")
 }

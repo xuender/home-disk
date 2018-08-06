@@ -4,7 +4,10 @@ import (
 	"bytes"
 	"github.com/nfnt/resize"
 	"image"
+	_ "image/gif"
 	"image/jpeg"
+	_ "image/png"
+	"log"
 	"os"
 )
 
@@ -19,18 +22,35 @@ func thumbnail(pic string, width, height int) ([]byte, error) {
 	// 解码图片
 	origin, _, err := image.Decode(f)
 	if err != nil {
+		log.Println(err)
 		return nil, err
 	}
 	// 缩放
 	w, h := size(origin.Bounds().Max.X, origin.Bounds().Max.Y, width, height)
 	canvas := resize.Thumbnail(uint(w), uint(h), origin, resize.Lanczos3)
 	// 裁剪
-	img := canvas.(*image.YCbCr)
-	subImg := img.SubImage(image.Rect(clip(w, h, width, height))).(*image.YCbCr)
-	// 输出JPG
+	x0, y0, x1, y1 := clip(w, h, width, height)
+	subImg := getImage(canvas, x0, y0, x1, y1)
 	buf := new(bytes.Buffer)
 	err = jpeg.Encode(buf, subImg, &jpeg.Options{100})
 	return buf.Bytes(), err
+}
+
+func getImage(canvas image.Image, x0, y0, x1, y1 int) image.Image {
+	switch canvas.(type) {
+	case *image.Paletted:
+		img := canvas.(*image.Paletted)
+		return img.SubImage(image.Rect(x0, y0, x1, y1)).(*image.Paletted)
+	case *image.YCbCr:
+		img := canvas.(*image.YCbCr)
+		return img.SubImage(image.Rect(x0, y0, x1, y1)).(*image.YCbCr)
+	case *image.NRGBA:
+		img := canvas.(*image.NRGBA)
+		return img.SubImage(image.Rect(x0, y0, x1, y1)).(*image.NRGBA)
+	default:
+		img := canvas.(*image.RGBA)
+		return img.SubImage(image.Rect(x0, y0, x1, y1)).(*image.RGBA)
+	}
 }
 
 func size(ow, oh, nw, nh int) (int, int) {
