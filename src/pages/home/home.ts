@@ -16,6 +16,6 @@ export class HomePage {
     this.pc = !this.plt.is('mobile') && !this.plt.is('mobileweb')
   }
   onUpload(ok: boolean) {
-    this.filesProvider.reset()
+    this.filesProvider.clean()
   }
 }

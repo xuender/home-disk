@@ -10,10 +10,16 @@ export class FilesProvider {
   filesMap = new Map<string, Array<File>>()
   days = []
   private run = true
+  private isClean = true
   constructor(public http: HttpClient) {
     this.reset();
   }
+  clean() {
+    this.isClean = true
+  }
   reset() {
+    if (!this.isClean) { return }
+    this.isClean = false
     this.run = true
     this.days = []
     this.filesMap.clear()
