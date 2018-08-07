@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Platform, NavController } from 'ionic-angular';
 import { FilesProvider } from '../../providers/files/files';
+import {File} from '../../domain/file'
 
 @Component({
   selector: 'page-home',
@@ -15,7 +16,7 @@ export class HomePage {
   ) {
     this.pc = !this.plt.is('mobile') && !this.plt.is('mobileweb')
   }
-  onUpload(ok: boolean) {
-    this.filesProvider.clean()
+  onUpload(f: File) {
+    this.filesProvider.news.push(f)
   }
 }

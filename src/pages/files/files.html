@@ -5,6 +5,12 @@
 </ion-header>
 
 <ion-content>
+  <ion-list *ngIf="files.news.length > 0">
+    <ion-list-header>
+      新上传文件
+    </ion-list-header>
+    <hd-files [files]="files.news" (selectFile)="onSelectFile($event)"></hd-files>
+  </ion-list>
   <ion-list *ngFor="let d of files.days">
     <ion-list-header>
       {{ d | day }}

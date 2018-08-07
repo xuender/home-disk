@@ -10,22 +10,11 @@ export class FilesProvider {
   filesMap = new Map<string, Array<File>>()
   days = []
   private run = true
-  private isClean = true
+  news: File[] = []
   constructor(public http: HttpClient) {
-    this.reset();
-  }
-  clean() {
-    this.isClean = true
-  }
-  reset() {
-    if (!this.isClean) { return }
-    this.isClean = false
-    this.run = true
-    this.days = []
-    this.filesMap.clear()
-    this._days = []
     this.http.get('/days')
       .subscribe((days: string[]) => {
+        // 获取所有日期
         this._days = days
         // 初始化 5 天
         const td = this._days.splice(0, 5)
@@ -33,10 +22,12 @@ export class FilesProvider {
           this.run = false
           return
         }
+        // 获取 5 天文件列表
         const s = [];
         for (const d of td) {
           s.push(this.getFiles(d))
         }
+        // 同步执行
         const source = of(...s);
         source.pipe(concatAll())
           .subscribe(files => {
