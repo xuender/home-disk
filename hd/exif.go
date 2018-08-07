@@ -14,6 +14,13 @@ const time_format = "2006:01:02 15:04:05"
 
 type Exif struct {
 	DateTime time.Time // 创建时间
+	Make     string    // 相机
+	Software string    // 软件
+	Model    string    // 模式
+	// GPSLatitude
+	// GPSLongitudeRef
+	// GPSLongitude
+	// GPSAltitudeRef
 }
 
 func NewExif(file string) (ret *Exif, err error) {
@@ -29,6 +36,9 @@ func NewExif(file string) (ret *Exif, err error) {
 		return
 	}
 	exif.ProcessExifStream(f)
+	ret.Make = getValue(exif, "Make")
+	ret.Software = getValue(exif, "Software")
+	ret.Model = getValue(exif, "Model")
 	t, err := time.Parse(time_format, getValue(exif, "DateTime"))
 	if err == nil {
 		ret.DateTime = t

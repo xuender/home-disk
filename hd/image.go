@@ -2,13 +2,14 @@ package hd
 
 import (
 	"bytes"
-	"github.com/nfnt/resize"
 	"image"
 	_ "image/gif"
 	"image/jpeg"
 	_ "image/png"
 	"log"
 	"os"
+
+	"github.com/nfnt/resize"
 )
 
 // 缩略图
@@ -38,51 +39,39 @@ func thumbnail(pic string, width, height int) ([]byte, error) {
 func getImage(canvas image.Image, x0, y0, x1, y1 int) image.Image {
 	switch canvas.(type) {
 	case *image.Alpha:
-		log.Println("*image.Alpha")
 		img := canvas.(*image.Alpha)
 		return img.SubImage(image.Rect(x0, y0, x1, y1)).(*image.Alpha)
 	case *image.Alpha16:
-		log.Println("*image.Alpha16")
 		img := canvas.(*image.Alpha16)
 		return img.SubImage(image.Rect(x0, y0, x1, y1)).(*image.Alpha16)
 	case *image.CMYK:
-		log.Println("*image.CMYK")
 		img := canvas.(*image.CMYK)
 		return img.SubImage(image.Rect(x0, y0, x1, y1)).(*image.CMYK)
 	case *image.Gray:
-		log.Println("*image.Gray")
 		img := canvas.(*image.Gray)
 		return img.SubImage(image.Rect(x0, y0, x1, y1)).(*image.Gray)
 	case *image.Gray16:
-		log.Println("*image.Gray16")
 		img := canvas.(*image.Gray16)
 		return img.SubImage(image.Rect(x0, y0, x1, y1)).(*image.Gray16)
 	case *image.NRGBA:
-		log.Println("*image.NRGBA")
 		img := canvas.(*image.NRGBA)
 		return img.SubImage(image.Rect(x0, y0, x1, y1)).(*image.NRGBA)
 	case *image.NRGBA64:
-		log.Println("*image.NRGBA64")
 		img := canvas.(*image.NRGBA64)
 		return img.SubImage(image.Rect(x0, y0, x1, y1)).(*image.NRGBA64)
 	case *image.NYCbCrA:
-		log.Println("*image.NYCbCrA")
 		img := canvas.(*image.NYCbCrA)
 		return img.SubImage(image.Rect(x0, y0, x1, y1)).(*image.NYCbCrA)
 	case *image.Paletted:
-		log.Println("*image.Paletted")
 		img := canvas.(*image.Paletted)
 		return img.SubImage(image.Rect(x0, y0, x1, y1)).(*image.Paletted)
 	case *image.RGBA64:
-		log.Println("*image.RGBA64")
 		img := canvas.(*image.RGBA64)
 		return img.SubImage(image.Rect(x0, y0, x1, y1)).(*image.RGBA64)
 	case *image.YCbCr:
-		log.Println("*image.YCbCr")
 		img := canvas.(*image.YCbCr)
 		return img.SubImage(image.Rect(x0, y0, x1, y1)).(*image.YCbCr)
 	default:
-		log.Println("default *image.RGBA")
 		img := canvas.(*image.RGBA)
 		return img.SubImage(image.Rect(x0, y0, x1, y1)).(*image.RGBA)
 	}
