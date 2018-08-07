@@ -1,11 +1,11 @@
 package hd
 
 import (
-	"github.com/xiam/exif"
-	"gopkg.in/h2non/filetype.v1"
 	"os"
 	"strings"
 	"time"
+
+	"gopkg.in/h2non/filetype.v1"
 )
 
 type File struct {
@@ -16,8 +16,6 @@ type File struct {
 	Sub       string    `json:"sub"`  // 子类型
 	Thumbnail []byte    `json:"-"`    // 缩略图
 }
-
-const time_format = "2006:01:02 15:04:05"
 
 func NewFile(file string, size int) (*File, error) {
 	fi, err := os.Stat(file)
@@ -33,16 +31,10 @@ func NewFile(file string, size int) (*File, error) {
 		r.Sub = t.MIME.Subtype
 		if r.Type == "image" {
 			// 读取exif
-			data, err := exif.Read(file)
+			exif, err := NewExif(file)
 			if err == nil {
 				// 照片创建时间
-				ct := data.Tags["Date and Time"]
-				if len(ct) == 19 {
-					t, err := time.Parse(time_format, ct)
-					if err == nil {
-						r.Ct = t
-					}
-				}
+				r.Ct = exif.DateTime
 				// TODO 未来增加经纬度等
 			}
 			// 缩略图

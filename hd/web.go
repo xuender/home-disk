@@ -81,7 +81,8 @@ func (w *Web) Run() {
 		AllowCredentials: true,
 	}))
 	// 静态资源
-	e.Use(static.ServeRoot("/", NewAssets("www")))
+	// e.Static("/", "www")
+	e.Use(getStatic("/", "www"))
 	// 二维码
 	e.GET("/qr", w.qrcode)
 	e.GET("/days", w.getDays)
@@ -131,7 +132,10 @@ func (w *Web) save(file string, key []byte) (*File, error) {
 	// 保存文件
 	mkdir(f.Path(w.Data))
 	if file != f.FullName(w.Data) {
-		os.Rename(file, f.FullName(w.Data))
+		err = os.Rename(file, f.FullName(w.Data))
+		if err != nil {
+			return f, err
+		}
 	}
 	// 保存文件列表
 	day := f.Day()
@@ -235,7 +239,7 @@ func (w *Web) thumbnail(c echo.Context) error {
 	return c.Blob(http.StatusOK, "image/jpeg", r.Thumbnail)
 }
 
-// 缩略图
+// 文件信息
 func (w *Web) getFile(c echo.Context) error {
 	id := c.Param("id")
 	key, err := hex.DecodeString(id)
@@ -244,7 +248,7 @@ func (w *Web) getFile(c echo.Context) error {
 	}
 	data, err := w.db.Get(key, nil)
 	if err != nil {
-		return c.String(http.StatusInternalServerError, "缩略图数据错误: "+id)
+		return c.String(http.StatusInternalServerError, "文件信息错误: "+id)
 	}
 	r := File{}
 	goutils.Decode(data, &r)
@@ -260,7 +264,7 @@ func (w *Web) download(c echo.Context) error {
 	}
 	data, err := w.db.Get(key, nil)
 	if err != nil {
-		return c.String(http.StatusInternalServerError, "缩略图数据错误: "+id)
+		return c.String(http.StatusInternalServerError, "文件数据错误: "+id)
 	}
 	f := File{}
 	goutils.Decode(data, &f)
@@ -288,17 +292,20 @@ func (w *Web) getDay(c echo.Context) error {
 				ret = append(ret, f)
 			}
 		}
+		// 按照时间排序
 		sort.SliceStable(ret, func(i, j int) bool { return ret[i].Ct.Unix() < ret[j].Ct.Unix() })
 		return c.JSON(http.StatusOK, ret)
 	}
 	return c.JSON(http.StatusOK, []string{})
 }
 
-func NewAssets(root string) *assetfs.AssetFS {
-	return &assetfs.AssetFS{
-		Asset:     Asset,
-		AssetDir:  AssetDir,
-		AssetInfo: AssetInfo,
-		Prefix:    root,
-	}
+func getStatic(root, prefix string) echo.MiddlewareFunc {
+	return static.ServeRoot(
+		root,
+		&assetfs.AssetFS{
+			Asset:     Asset,
+			AssetDir:  AssetDir,
+			AssetInfo: AssetInfo,
+			Prefix:    prefix,
+		})
 }
