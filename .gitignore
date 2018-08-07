@@ -49,3 +49,4 @@ package-lock.json
 data/
 temp/
 db/
+hd/bindata.go

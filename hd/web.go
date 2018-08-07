@@ -2,17 +2,20 @@ package hd
 
 import (
 	"encoding/hex"
-	"github.com/labstack/echo"
-	"github.com/labstack/echo/middleware"
-	"github.com/syndtr/goleveldb/leveldb"
-	"github.com/xuender/goutils"
 	"io"
 	"log"
 	"net/http"
 	"os"
 	"path/filepath"
-	"rsc.io/qr"
 	"sort"
+
+	static "github.com/Code-Hex/echo-static"
+	assetfs "github.com/elazarl/go-bindata-assetfs"
+	"github.com/labstack/echo"
+	"github.com/labstack/echo/middleware"
+	"github.com/syndtr/goleveldb/leveldb"
+	"github.com/xuender/goutils"
+	"rsc.io/qr"
 )
 
 type Web struct {
@@ -78,7 +81,7 @@ func (w *Web) Run() {
 		AllowCredentials: true,
 	}))
 	// 静态资源
-	e.Static("/", "www")
+	e.Use(static.ServeRoot("/", NewAssets("www")))
 	// 二维码
 	e.GET("/qr", w.qrcode)
 	e.GET("/days", w.getDays)
@@ -289,4 +292,13 @@ func (w *Web) getDay(c echo.Context) error {
 		return c.JSON(http.StatusOK, ret)
 	}
 	return c.JSON(http.StatusOK, []string{})
+}
+
+func NewAssets(root string) *assetfs.AssetFS {
+	return &assetfs.AssetFS{
+		Asset:     Asset,
+		AssetDir:  AssetDir,
+		AssetInfo: AssetInfo,
+		Prefix:    root,
+	}
 }

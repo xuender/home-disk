@@ -108,21 +108,19 @@ func size(ow, oh, nw, nh int) (int, int) {
 }
 
 func clip(ow, oh, nw, nh int) (x0, y0, x1, y1 int) {
-	if ow == nw {
-		x0 = 0
-		x1 = ow
-	}
-	if oh == nh {
-		y0 = 0
-		y1 = oh
-	}
 	if ow > nw {
 		x0 = (ow - nw) / 2
 		x1 = ow - x0
+	} else {
+		x0 = 0
+		x1 = ow
 	}
 	if oh > nh {
 		y0 = (oh - nh) / 2
 		y1 = oh - y0
+	} else {
+		y0 = 0
+		y1 = oh
 	}
 	return
 }

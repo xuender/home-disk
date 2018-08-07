@@ -11,6 +11,8 @@ import (
 	"./hd"
 )
 
+//go:generate go-bindata -nomemcopy -pkg hd -o ./hd/bindata.go www/...
+
 func main() {
 	app := cli.NewApp()
 	app.Name = "home-disk"
