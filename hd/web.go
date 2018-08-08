@@ -32,6 +32,7 @@ type Web struct {
 var DAYS_KEY = []byte("days")
 
 func (w *Web) Init(reset bool) error {
+	log.SetFlags(log.Lshortfile | log.LstdFlags)
 	if reset {
 		// 删除数据库
 		log.Printf("删除数据库 %s\n", w.Db)
@@ -81,8 +82,8 @@ func (w *Web) Run() {
 		AllowCredentials: true,
 	}))
 	// 静态资源
-	// e.Static("/", "www")
-	e.Use(getStatic("/", "www"))
+	e.Static("/", "www")
+	// e.Use(getStatic("/", "www"))
 	// 二维码
 	e.GET("/qr", w.qrcode)
 	e.GET("/days", w.getDays)

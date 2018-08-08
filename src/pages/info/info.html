@@ -1,0 +1,31 @@
+<ion-header>
+  <ion-navbar>
+    <ion-buttons start>
+      <button ion-button icon-only color="royal" (click)="cancel()">
+        <ion-icon name="close"></ion-icon>
+      </button>
+    </ion-buttons>
+    <ion-title>文件信息</ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content padding>
+  <ion-list>
+    <ion-item>
+      <ion-label fixed>文件名</ion-label>
+      <ion-input type="text" [ngModel]="file.name" readonly></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label fixed>类别</ion-label>
+      <ion-input type="text" value="{{ file.type | fileType }}" readonly></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label fixed>类型</ion-label>
+      <ion-input type="text" value="{{ file.sub }}" readonly></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label fixed>创建</ion-label>
+      <ion-input type="text" value="{{ file.ct | date:'yyyy-MM-dd HH:mm:ss' }}" readonly></ion-input>
+    </ion-item>
+  </ion-list>
+</ion-content>

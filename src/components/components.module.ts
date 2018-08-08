@@ -5,10 +5,12 @@ import { FileUploadModule } from 'ng2-file-upload'
 
 import { HdUploadComponent } from './hd-upload/hd-upload';
 import { HdFilesComponent } from './hd-files/hd-files';
+import { HdThumbnailComponent } from './hd-thumbnail/hd-thumbnail';
 @NgModule({
   declarations: [
     HdUploadComponent,
     HdFilesComponent,
+    HdThumbnailComponent,
   ],
   imports: [
     IonicModule,
@@ -18,6 +20,7 @@ import { HdFilesComponent } from './hd-files/hd-files';
     HdUploadComponent,
     FileUploadModule,
     HdFilesComponent,
+    HdThumbnailComponent,
   ]
 })
 export class ComponentsModule { }

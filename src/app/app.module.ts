@@ -9,13 +9,15 @@ import { MyApp } from './app.component';
 import { AboutPage } from '../pages/about/about';
 import { ContactPage } from '../pages/contact/contact';
 import { FilesPage } from '../pages/files/files';
-import { HomePage } from '../pages/home/home';
 import { TabsPage } from '../pages/tabs/tabs';
-import {ImagePage} from '../pages/image/image'
+import { ImagePage } from '../pages/image/image'
 
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import { FilesProvider } from '../providers/files/files';
+import { PreviewProvider } from '../providers/preview/preview';
+import { InfoPage } from '../pages/info/info';
+import { UploadPage } from '../pages/upload/upload';
 
 @NgModule({
   declarations: [
@@ -23,9 +25,10 @@ import { FilesProvider } from '../providers/files/files';
     AboutPage,
     ContactPage,
     FilesPage,
-    HomePage,
     ImagePage,
     TabsPage,
+    InfoPage,
+    UploadPage,
   ],
   imports: [
     BrowserModule,
@@ -40,15 +43,17 @@ import { FilesProvider } from '../providers/files/files';
     AboutPage,
     ContactPage,
     FilesPage,
-    HomePage,
     TabsPage,
     ImagePage,
+    UploadPage,
+    InfoPage
   ],
   providers: [
     StatusBar,
     SplashScreen,
     { provide: ErrorHandler, useClass: IonicErrorHandler },
-    FilesProvider
+    FilesProvider,
+    PreviewProvider
   ]
 })
 export class AppModule { }

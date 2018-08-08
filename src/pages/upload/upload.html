@@ -1,10 +1,9 @@
 <ion-header>
   <ion-navbar>
-    <ion-title>首页</ion-title>
+    <ion-title>上传</ion-title>
   </ion-navbar>
 </ion-header>
 
 <ion-content padding>
-  <img src="/qr" *ngIf="pc">
   <hd-upload (up)="onUpload($event)"></hd-upload>
 </ion-content>

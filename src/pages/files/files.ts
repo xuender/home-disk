@@ -1,8 +1,9 @@
 import { Component } from '@angular/core';
-import { NavController, NavParams, ModalController } from 'ionic-angular';
+import { NavController, NavParams } from 'ionic-angular';
 import { File } from '../../domain/file'
 import { FilesProvider } from '../../providers/files/files'
 import { ImagePage } from '../image/image'
+import { PreviewProvider } from '../../providers/preview/preview';
 
 @Component({
   selector: 'page-files',
@@ -12,8 +13,8 @@ export class FilesPage {
   constructor(
     public navCtrl: NavController,
     public navParams: NavParams,
-    public modalCtrl: ModalController,
     public files: FilesProvider,
+    private preview: PreviewProvider
   ) {
   }
   doInfinite(infiniteScroll) {
@@ -21,15 +22,6 @@ export class FilesPage {
       .then(r => infiniteScroll.complete())
   }
   onSelectFile(file: File) {
-    this.modalCtrl.create(this.getPage(file.type), { file: file })
-      .present();
-  }
-  private getPage(type: string): any {
-    switch (type) {
-      case 'image':
-        return ImagePage
-      default:
-        return ImagePage
-    }
+    this.preview.preview(file)
   }
 }

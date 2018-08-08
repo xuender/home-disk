@@ -1,7 +1,4 @@
 <ion-list>
-  <ion-list-header>
-    文件上传
-  </ion-list-header>
   <ion-item>
     <input ion-input type="file" ng2FileSelect [uploader]="uploader" multiple>
   </ion-item>
@@ -27,8 +24,8 @@
   </ion-item>
   <ion-item-sliding *ngFor="let item of uploader.queue">
     <ion-item>
-      <ion-thumbnail *ngIf="item?.alias!='file'" item-start>
-        <img src="/t/{{item?.alias}}">
+      <ion-thumbnail item-start>
+        <hd-thumbnail [item]="item"></hd-thumbnail>
       </ion-thumbnail>
       {{ item?.file?.name }}
       <ion-badge color="secondary" *ngIf="item.isSuccess" item-end>
