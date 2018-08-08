@@ -4,6 +4,7 @@ import { HttpClientModule } from '@angular/common/http'
 import { IonicApp, IonicModule, IonicErrorHandler } from 'ionic-angular';
 import { ComponentsModule } from '../components/components.module'
 import { PipesModule } from '../pipes/pipes.module'
+import { IonicImageViewerModule } from 'ionic-img-viewer'
 import { MyApp } from './app.component';
 
 import { AboutPage } from '../pages/about/about';
@@ -35,6 +36,7 @@ import { UploadPage } from '../pages/upload/upload';
     ComponentsModule,
     PipesModule,
     HttpClientModule,
+    IonicImageViewerModule,
     IonicModule.forRoot(MyApp)
   ],
   bootstrap: [IonicApp],
