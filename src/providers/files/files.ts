@@ -4,6 +4,7 @@ import { File } from '../../domain/file'
 import { Observable } from 'rxjs/Observable';
 import { concatAll } from 'rxjs/operators'
 import { of } from 'rxjs/observable/of'
+import { filter, includes } from 'lodash-es'
 @Injectable()
 export class FilesProvider {
   private _days: string[] = []
@@ -12,6 +13,13 @@ export class FilesProvider {
   private run = true
   news: File[] = []
   constructor(public http: HttpClient) {
+    this.reset()
+  }
+  reset() {
+    this.run = true
+    this.days = []
+    this.news = []
+    this.filesMap.clear()
     this.http.get('/days')
       .subscribe((days: string[]) => {
         // 获取所有日期
@@ -40,6 +48,12 @@ export class FilesProvider {
             }
           })
       })
+  }
+  filter(d: string, types: string[]): File[] {
+    if (types.length == 0) {
+      return this.filesMap.get(d)
+    }
+    return filter(this.filesMap.get(d), f => includes(types, f.type))
   }
   getFiles(day: string): Observable<Array<File>> {
     return this.http.get<Array<File>>(`/days/${day}`)

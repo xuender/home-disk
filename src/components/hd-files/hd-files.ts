@@ -7,6 +7,7 @@ import { File } from '../../domain/file'
 export class HdFilesComponent {
   @Input() files: File[]
   @Output() selectFile = new EventEmitter<File>()
+  @Input() types: string[] = []
   constructor() {
   }
   onSelectFile(file: File) {

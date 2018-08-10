@@ -84,7 +84,7 @@ func (w *Web) Run() {
 	// 文件上传
 	s.POST("/up", w.upload)
 	// 静态资源
-	// static(s)
+	static(s)
 	// 启动服务
 	s.Run(w.Port)
 }

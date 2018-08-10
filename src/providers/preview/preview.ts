@@ -28,19 +28,4 @@ export class PreviewProvider {
         return InfoPage
     }
   }
-  getSrc(file: File): string {
-    if (file) {
-      switch (file.type) {
-        case 'image':
-          return `/t/${file.id}`
-        case 'archive':
-        case 'audio':
-        case 'video':
-          return `${PATH}${file.type}.png`
-        default:
-          return this.srcDefault
-      }
-    }
-    return `${PATH}wait.png`
-  }
 }
