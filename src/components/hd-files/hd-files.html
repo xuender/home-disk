@@ -1,7 +1,8 @@
 <ion-grid>
   <ion-row>
-    <ion-col *ngFor="let f of files" [ngSwitch]="f.type" (click)="onSelectFile(f)" col-4 col-sm-3 col-dm-3 col-lg-2>
-      <hd-thumbnail [file]="f"></hd-thumbnail>
+    <ion-col *ngFor="let f of files" [ngSwitch]="f.type" (press)="onDownload(f)" col-4 col-sm-3 col-dm-3 col-lg-2>
+        <img src="t/{{f.id}}" imageViewer="/down/{{f.id}}"  *ngIf="f.type=='image'">
+        <img src="assets/imgs/{{f.type}}.png" *ngIf="f.type!='image'" (click)="onSelectFile(f)">
     </ion-col>
   </ion-row>
 </ion-grid>

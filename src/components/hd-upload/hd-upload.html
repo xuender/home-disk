@@ -24,8 +24,10 @@
   </ion-item>
   <ion-item-sliding *ngFor="let item of uploader.queue">
     <ion-item>
-      <ion-thumbnail item-start>
-        <hd-thumbnail [item]="item"></hd-thumbnail>
+      <ion-thumbnail item-start [ngSwitch]="true">
+        <img src="t/{{item?.f?.id}}" imageViewer="/down/{{item?.f?.id}}"  *ngSwitchCase="item?.f && item?.f?.type=='image'">
+        <img src="t/{{item?.f?.type}}.png" *ngSwitchCase="item?.f && item?.f?.type!='image'">
+        <img src="assets/imgs/wait.png" *ngSwitchDefault>
       </ion-thumbnail>
       {{ item?.file?.name }}
       <ion-badge color="secondary" *ngIf="item.isSuccess" item-end>

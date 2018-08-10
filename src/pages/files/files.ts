@@ -2,7 +2,6 @@ import { Component } from '@angular/core';
 import { NavController, NavParams } from 'ionic-angular';
 import { File } from '../../domain/file'
 import { FilesProvider } from '../../providers/files/files'
-import { ImagePage } from '../image/image'
 import { PreviewProvider } from '../../providers/preview/preview';
 
 @Component({

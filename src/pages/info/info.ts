@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { NavParams, ViewController } from 'ionic-angular';
+import { File } from '../../domain/file';
 
 @Component({
   selector: 'page-info',
@@ -20,5 +21,11 @@ export class InfoPage {
   ionViewDidLoad() {
     console.log('ionViewDidLoad InfoPage');
   }
-
+  download() {
+    const a = document.createElement("a")
+    a.href = `/down/${this.file.id}`
+    a.download = this.file.name
+    a.click()
+    a.remove()
+  }
 }

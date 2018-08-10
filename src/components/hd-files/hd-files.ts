@@ -12,4 +12,11 @@ export class HdFilesComponent {
   onSelectFile(file: File) {
     this.selectFile.emit(file)
   }
+  onDownload(file: File) {
+    const a = document.createElement("a")
+    a.href = `/down/${file.id}`
+    a.download = file.name
+    a.click()
+    a.remove()
+  }
 }

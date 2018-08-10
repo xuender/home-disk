@@ -12,12 +12,14 @@ export class HdUploadComponent {
   uploader: FileUploader = new FileUploader({ url: '/up' });
   constructor(private preview:PreviewProvider) {
     this.uploader.response.subscribe((r: string) => {
-      if (r.length < 10) { return }
+      if (r.length < 10) {
+        return
+       }
       const f: File = JSON.parse(r)
       for (const q of this.uploader.queue) {
         if (q.file && q.file.name == f.name) {
           q['f'] = f
-          this.preview.itemChanged.emit(q)
+          // this.preview.itemChanged.emit(q)
         }
       }
       this.up.emit(f)

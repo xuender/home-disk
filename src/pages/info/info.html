@@ -27,5 +27,6 @@
       <ion-label fixed>创建</ion-label>
       <ion-input type="text" value="{{ file.ct | date:'yyyy-MM-dd HH:mm:ss' }}" readonly></ion-input>
     </ion-item>
+    <button ion-button (click)="download()">下载</button>
   </ion-list>
 </ion-content>

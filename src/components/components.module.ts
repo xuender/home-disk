@@ -2,25 +2,24 @@ import { NgModule } from '@angular/core';
 import { IonicModule } from 'ionic-angular'
 import { FileUploadModule } from 'ng2-file-upload'
 //import { NgxUploaderModule } from 'ngx-uploader'
+import { IonicImageViewerModule } from 'ionic-img-viewer'
 
 import { HdUploadComponent } from './hd-upload/hd-upload';
 import { HdFilesComponent } from './hd-files/hd-files';
-import { HdThumbnailComponent } from './hd-thumbnail/hd-thumbnail';
 @NgModule({
   declarations: [
     HdUploadComponent,
     HdFilesComponent,
-    HdThumbnailComponent,
   ],
   imports: [
     IonicModule,
     FileUploadModule,
+    IonicImageViewerModule,
   ],
   exports: [
     HdUploadComponent,
     FileUploadModule,
     HdFilesComponent,
-    HdThumbnailComponent,
   ]
 })
 export class ComponentsModule { }

@@ -9,12 +9,10 @@ import (
 	"path/filepath"
 	"sort"
 
-	static "github.com/Code-Hex/echo-static"
 	assetfs "github.com/elazarl/go-bindata-assetfs"
-	"github.com/labstack/echo"
-	"github.com/labstack/echo/middleware"
 	"github.com/syndtr/goleveldb/leveldb"
 	"github.com/xuender/goutils"
+	"github.com/xuender/goutils/web"
 	"rsc.io/qr"
 )
 
@@ -72,36 +70,36 @@ func (w *Web) Init(reset bool) error {
 }
 
 func (w *Web) Run() {
-	e := echo.New()
-	e.Use(middleware.Logger())
-	e.Use(middleware.Recover())
-	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
-		AllowOrigins:     []string{"*"},
-		AllowMethods:     []string{echo.POST},
-		AllowHeaders:     []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept},
-		AllowCredentials: true,
-	}))
-	// 静态资源
-	e.Static("/", "www")
-	// e.Use(getStatic("/", "www"))
+	s := web.Classic("家庭网盘")
 	// 二维码
-	e.GET("/qr", w.qrcode)
-	e.GET("/days", w.getDays)
-	e.GET("/days/:day", w.getDay)
+	s.GET("/qr", w.qrcode)
+	s.GET("/days", w.getDays)
+	s.GET("/days/{day}", w.getDay)
 	// 缩略图
-	e.GET("/t/:id", w.thumbnail)
+	s.GET("/t/{id}", w.thumbnail)
 	// 文件信息
-	e.GET("/file/:id", w.getFile)
+	s.GET("/file/{id}", w.getFile)
 	// 下载
-	e.GET("/down/:id", w.download)
+	s.GET("/down/{id}", w.download)
 	// 文件上传
-	e.POST("/up", w.upload)
+	s.POST("/up", w.upload)
+	// 静态资源
+	// static(s)
 	// 启动服务
-	e.Logger.Fatal(e.Start(w.Port))
+	s.Run(w.Port)
+}
+func static(w *web.Web) {
+	fs := http.FileServer(&assetfs.AssetFS{
+		Asset:     Asset,
+		AssetDir:  AssetDir,
+		AssetInfo: AssetInfo,
+		Prefix:    "www",
+	})
+	w.Router.PathPrefix("/").Handler(http.StripPrefix("/", fs))
 }
 
 // 上传文件
-func (w *Web) upload(c echo.Context) error {
+func (w *Web) upload(c *web.Context) error {
 	file, err := w.saveTemp(c)
 	if err != nil {
 		return c.String(http.StatusInternalServerError, err.Error())
@@ -177,7 +175,7 @@ func (w *Web) isOld(key []byte) bool {
 	return false
 }
 
-func (w *Web) saveTemp(c echo.Context) (string, error) {
+func (w *Web) saveTemp(c *web.Context) (string, error) {
 	// 来源
 	file, err := c.FormFile("file")
 	if err != nil {
@@ -212,7 +210,7 @@ func (w *Web) createKey(file string) ([]byte, error) {
 }
 
 // QR码
-func (w *Web) qrcode(c echo.Context) error {
+func (w *Web) qrcode(c *web.Context) error {
 	url, err := GetUrl(w.Port)
 	if err != nil {
 		return c.String(http.StatusInternalServerError, err.Error())
@@ -225,7 +223,7 @@ func (w *Web) qrcode(c echo.Context) error {
 }
 
 // 缩略图
-func (w *Web) thumbnail(c echo.Context) error {
+func (w *Web) thumbnail(c *web.Context) error {
 	id := c.Param("id")
 	key, err := hex.DecodeString(id)
 	if err != nil {
@@ -241,7 +239,7 @@ func (w *Web) thumbnail(c echo.Context) error {
 }
 
 // 文件信息
-func (w *Web) getFile(c echo.Context) error {
+func (w *Web) getFile(c *web.Context) error {
 	id := c.Param("id")
 	key, err := hex.DecodeString(id)
 	if err != nil {
@@ -257,7 +255,7 @@ func (w *Web) getFile(c echo.Context) error {
 }
 
 // 下载文件
-func (w *Web) download(c echo.Context) error {
+func (w *Web) download(c *web.Context) error {
 	id := c.Param("id")
 	key, err := hex.DecodeString(id)
 	if err != nil {
@@ -272,12 +270,12 @@ func (w *Web) download(c echo.Context) error {
 	return c.File(f.FullName(w.Data))
 }
 
-func (w *Web) getDays(c echo.Context) error {
+func (w *Web) getDays(c *web.Context) error {
 	return c.JSON(http.StatusOK, w.days)
 }
 
 // 获取日文件信息列表
-func (w *Web) getDay(c echo.Context) error {
+func (w *Web) getDay(c *web.Context) error {
 	day := c.Param("day")
 	keys := [][]byte{}
 	k := []byte(day)
@@ -298,15 +296,4 @@ func (w *Web) getDay(c echo.Context) error {
 		return c.JSON(http.StatusOK, ret)
 	}
 	return c.JSON(http.StatusOK, []string{})
-}
-
-func getStatic(root, prefix string) echo.MiddlewareFunc {
-	return static.ServeRoot(
-		root,
-		&assetfs.AssetFS{
-			Asset:     Asset,
-			AssetDir:  AssetDir,
-			AssetInfo: AssetInfo,
-			Prefix:    prefix,
-		})
 }
