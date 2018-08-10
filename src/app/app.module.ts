@@ -7,6 +7,11 @@ import { PipesModule } from '../pipes/pipes.module'
 import { IonicImageViewerModule } from 'ionic-img-viewer'
 import { MyApp } from './app.component';
 
+import { VgCoreModule } from 'videogular2/core';
+import { VgControlsModule } from 'videogular2/controls';
+import { VgOverlayPlayModule } from 'videogular2/overlay-play';
+import { VgBufferingModule } from 'videogular2/buffering';
+
 import { AboutPage } from '../pages/about/about';
 import { ContactPage } from '../pages/contact/contact';
 import { FilesPage } from '../pages/files/files';
@@ -37,6 +42,10 @@ import { UploadPage } from '../pages/upload/upload';
     PipesModule,
     HttpClientModule,
     IonicImageViewerModule,
+    VgCoreModule,
+    VgControlsModule,
+    VgOverlayPlayModule,
+    VgBufferingModule,
     IonicModule.forRoot(MyApp)
   ],
   bootstrap: [IonicApp],

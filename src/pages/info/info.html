@@ -11,6 +11,11 @@
 
 <ion-content padding>
   <ion-list>
+    <ion-item *ngIf="file.type=='video' || file.type=='audio'">
+      <video [vgMedia]="media" #media id="singleVideo" preload="auto" wdith="300px" height="300px" controls>
+        <source src="/down/{{file.id}}" type="{{file.type}}/{{file.sub}}">
+      </video>
+    </ion-item>
     <ion-item>
       <ion-label fixed>文件名</ion-label>
       <ion-input type="text" [ngModel]="file.name" readonly></ion-input>
