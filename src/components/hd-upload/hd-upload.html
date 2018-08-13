@@ -26,8 +26,9 @@
     <ion-item>
       <ion-thumbnail item-start [ngSwitch]="true">
         <img src="t/{{item?.f?.id}}" imageViewer="/down/{{item?.f?.id}}"  *ngSwitchCase="item?.f && item?.f?.type=='image'">
-        <img src="t/{{item?.f?.type}}.png" *ngSwitchCase="item?.f && item?.f?.type!='image'">
-        <img src="assets/imgs/wait.png" *ngSwitchDefault>
+        <img src="assets/imgs/audio.png" *ngSwitchCase="item?.f && item?.f?.type=='audio'">
+        <img src="assets/imgs/wait.png" *ngSwitchCase="!item?.f">
+        <img src="t/{{item?.f?.id}}" *ngSwitchDefault>
       </ion-thumbnail>
       {{ item?.file?.name }}
       <ion-badge color="secondary" *ngIf="item.isSuccess" item-end>

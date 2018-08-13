@@ -109,16 +109,22 @@ func (w *Web) upload(c *web.Context) error {
 	if err != nil {
 		return c.String(http.StatusInternalServerError, err.Error())
 	}
+	ret := make(map[string]interface{}, 2)
 	// 查找DB
-	if w.isOld(key) {
+	o, fi := w.isOld(key)
+	if o {
 		os.Remove(file)
-		return c.String(http.StatusOK, "重复")
+		ret["success"] = false
+		ret["file"] = fi
+		return c.JSON(http.StatusOK, ret)
 	}
 	f, err := w.save(file, key)
 	if err != nil {
 		return c.String(http.StatusInternalServerError, err.Error())
 	}
-	return c.JSON(http.StatusOK, f)
+	ret["success"] = true
+	ret["file"] = f
+	return c.JSON(http.StatusOK, ret)
 }
 
 func (w *Web) save(file string, key []byte) (*File, error) {
@@ -162,7 +168,7 @@ func (w *Web) addList(day string, key []byte) {
 	w.db.Put(k, bs, nil)
 }
 
-func (w *Web) isOld(key []byte) bool {
+func (w *Web) isOld(key []byte) (bool, *File) {
 	// 查找DB
 	data, err := w.db.Get(key, nil)
 	if err == nil {
@@ -170,9 +176,9 @@ func (w *Web) isOld(key []byte) bool {
 		nr := File{}
 		goutils.Decode(data, &nr)
 		_, err := os.Stat(nr.FullName(w.Data))
-		return err == nil
+		return err == nil, &nr
 	}
-	return false
+	return false, nil
 }
 
 func (w *Web) saveTemp(c *web.Context) (string, error) {
@@ -227,15 +233,27 @@ func (w *Web) thumbnail(c *web.Context) error {
 	id := c.Param("id")
 	key, err := hex.DecodeString(id)
 	if err != nil {
-		return c.String(http.StatusInternalServerError, "缩略图ID错误: "+id)
+		return c.Blob(http.StatusOK, "image/png", getErrPic())
 	}
 	data, err := w.db.Get(key, nil)
 	if err != nil {
-		return c.String(http.StatusInternalServerError, "缩略图数据错误: "+id)
+		return c.Blob(http.StatusOK, "image/png", getErrPic())
 	}
 	r := File{}
 	goutils.Decode(data, &r)
+	if r.Thumbnail == nil {
+		return c.Blob(http.StatusOK, "image/png", getErrPic())
+	}
 	return c.Blob(http.StatusOK, "image/jpeg", r.Thumbnail)
+}
+
+var errPic []byte
+
+func getErrPic() []byte {
+	if errPic == nil {
+		errPic, _ = Asset("www/assets/imgs/error.png")
+	}
+	return errPic
 }
 
 // 文件信息

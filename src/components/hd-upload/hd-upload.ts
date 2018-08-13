@@ -1,5 +1,5 @@
 import { Component, Output, EventEmitter } from '@angular/core'
-import { FileUploader } from 'ng2-file-upload'
+import { FileUploader, FileItem } from 'ng2-file-upload'
 import { File } from '../../domain/file';
 
 @Component({
@@ -10,18 +10,16 @@ export class HdUploadComponent {
   @Output() up = new EventEmitter<File>()
   uploader: FileUploader = new FileUploader({ url: '/up' });
   constructor() {
-    this.uploader.response.subscribe((r: string) => {
-      if (r.length < 10) {
+    this.uploader.onCompleteItem = (item: FileItem, r: string, status: number) => {
+      if (status !== 200) {
+        // TOOD 服务器错误
         return
       }
-      const f: File = JSON.parse(r)
-      for (const q of this.uploader.queue) {
-        if (q.file && q.file.name == f.name) {
-          q['f'] = f
-          // this.preview.itemChanged.emit(q)
-        }
+      const ret: any = JSON.parse(r)
+      if (ret['success']) {
+        this.up.emit(ret['file'])
       }
-      this.up.emit(f)
-    })
+      item['f'] = ret['file']
+    }
   }
 }

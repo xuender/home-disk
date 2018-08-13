@@ -16,6 +16,9 @@
         <source src="/down/{{file.id}}" type="{{file.type}}/{{file.sub}}">
       </video>
     </ion-item>
+    <ion-item *ngIf="file.type!='video' && file.type!='audio'">
+      <img src="/t/{{file.id}}">
+    </ion-item>
     <ion-item>
       <ion-label fixed>文件名</ion-label>
       <ion-input type="text" [ngModel]="file.name" readonly></ion-input>

@@ -1,8 +1,9 @@
 <ion-grid>
   <ion-row>
-    <ion-col *ngFor="let f of files" [ngSwitch]="f.type" (press)="onDownload(f)" col-4 col-sm-3 col-dm-3 col-lg-2>
-        <img src="t/{{f.id}}" imageViewer="/down/{{f.id}}"  *ngIf="f.type=='image'">
-        <img src="assets/imgs/{{f.type}}.png" *ngIf="f.type!='image'" (click)="onSelectFile(f)">
+    <ion-col *ngFor="let f of files" [ngSwitch]="true" (press)="onDownload(f)" col-4 col-sm-3 col-dm-3 col-lg-2>
+        <img src="t/{{f.id}}" imageViewer="/down/{{f.id}}" *ngSwitchCase="f.type=='image'">
+        <img src="assets/imgs/audio.png"  *ngSwitchCase="f.type=='audio'" (click)="onSelectFile(f)">
+        <img src="t/{{f.id}}" (click)="onSelectFile(f)" *ngSwitchDefault>
     </ion-col>
   </ion-row>
 </ion-grid>

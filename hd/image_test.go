@@ -1,10 +1,12 @@
 package hd
 
 import (
-	. "github.com/smartystreets/goconvey/convey"
 	"testing"
+
+	. "github.com/smartystreets/goconvey/convey"
 )
 
+/*
 func TestSize(t *testing.T) {
 	Convey("size", t, func() {
 		w, h := size(100, 200, 10, 20)
@@ -24,7 +26,6 @@ func TestSize(t *testing.T) {
 		So(h, ShouldEqual, 20)
 	})
 }
-
 func TestClip(t *testing.T) {
 	Convey("clip", t, func() {
 		Convey("ok", func() {
@@ -40,6 +41,16 @@ func TestClip(t *testing.T) {
 			So(y1, ShouldEqual, 20)
 			So(x0, ShouldEqual, 0)
 			So(x1, ShouldEqual, 20)
+		})
+	})
+}
+*/
+func TestThumbnail(t *testing.T) {
+	Convey("thumbnail", t, func() {
+		Convey("ok", func() {
+			bs, err := thumbnail("i.jpg", 200, 200)
+			So(err, ShouldBeNil)
+			So(bs, ShouldNotBeNil)
 		})
 	})
 }

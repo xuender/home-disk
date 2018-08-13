@@ -9,12 +9,22 @@ import (
 )
 
 type File struct {
-	Id        string    `json:"id"`   // 主键
-	Name      string    `json:"name"` // 文件名
-	Ct        time.Time `json:"ct"`   // 创建时间
-	Type      string    `json:"type"` // 类型
-	Sub       string    `json:"sub"`  // 子类型
-	Thumbnail []byte    `json:"-"`    // 缩略图
+	Id        string    `json:"id"`                 // 主键
+	Name      string    `json:"name"`               // 文件名
+	Ct        time.Time `json:"ct"`                 // 创建时间
+	Type      string    `json:"type"`               // 类型
+	Sub       string    `json:"sub"`                // 子类型
+	Duration  int       `json:"duration,omitempty"` // 时长, 单位毫秒
+	Thumbnail []byte    `json:"-"`                  // 缩略图
+}
+
+var playPic []byte
+
+func getPlayPic() []byte {
+	if playPic == nil {
+		playPic, _ = Asset("www/assets/imgs/play.png")
+	}
+	return playPic
 }
 
 func NewFile(file string, size int) (*File, error) {
@@ -37,7 +47,28 @@ func NewFile(file string, size int) (*File, error) {
 				r.Ct = exif.DateTime
 				// TODO 未来增加经纬度等
 			}
-			// 缩略图
+			r.Thumbnail, _ = thumbnail(file, size, size)
+		} else if r.Type == "video" {
+			mi, err := NewMediainfo(file)
+			if err == nil {
+				r.Ct = mi.DateTime
+				r.Duration = mi.Duration
+			}
+			r.Thumbnail, err = thumbnail(file, size, size)
+			if err == nil {
+				bs, err := play(r.Thumbnail, getPlayPic())
+				if err == nil {
+					r.Thumbnail = bs
+				}
+			}
+			// TODO 未来增加音频
+		} else if r.Type == "audio" {
+			mi, err := NewMediainfo(file)
+			if err == nil {
+				r.Duration = mi.Duration
+			}
+			r.Thumbnail, _ = thumbnail(file, size, size)
+		} else if r.Type == "application" && r.Sub == "pdf" {
 			r.Thumbnail, _ = thumbnail(file, size, size)
 		}
 	}

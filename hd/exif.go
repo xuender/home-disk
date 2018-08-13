@@ -44,8 +44,6 @@ func NewExif(file string) (ret *Exif, err error) {
 	t, err := time.Parse(time_format, getValue(exif, "DateTime"))
 	if err == nil {
 		ret.DateTime = t
-	} else {
-		ret.DateTime = time.Now()
 	}
 	return
 }
